@@ -1,0 +1,40 @@
+name = "sales-discord-crm"
+main = "src/index.js"
+compatibility_date = "2024-09-01"
+
+# Work week is Sunday-Friday, Saturday is the holiday. Cloudflare's cron
+# parser uses day-of-week 1-7 (1=Monday ... 7=Sunday, NOT the 0=Sunday
+# convention some cron implementations use) — so Sun-Fri is "1-5,7", not
+# "0-5" (that value is rejected outright). Cron triggers always run in UTC,
+# so these are the UTC-equivalent times for Kathmandu (UTC+5:45): 9:00 AM,
+# 2:00 PM, 8:00 PM / 8:15 PM Sun-Fri, and Saturday 5:00 PM Nepal time. Free
+# Cloudflare accounts cap at 5 cron triggers total, so this stays at exactly
+# 5 — see the comments in src/index.js's scheduled() for what shares a slot
+# with what.
+[triggers]
+crons = [
+  "15 3 * * 1-5,7",   # 9:00 AM NPT, Sun-Fri — morning check-in prompt
+  "15 8 * * 1-5,7",   # 2:00 PM NPT, Sun-Fri — attendance cutoff sweep + follow-up due sweep
+  "15 14 * * 1-5,7",  # 8:00 PM NPT, Sun-Fri — daily DM quota sweep
+  "30 14 * * 1-5,7",  # 8:15 PM NPT, Sun-Fri — daily leaderboard post
+  "15 11 * * 6"       # 5:00 PM NPT Saturday — weekly rollup + leaderboard winner reveal
+]
+
+# Non-secret configuration. Fill these in after you create the Discord app,
+# server, and Google Sheet (see DEPLOY.md). Secrets (tokens/keys) are set
+# separately with `wrangler secret put`, never written here.
+[vars]
+DISCORD_PUBLIC_KEY = ""
+DISCORD_APPLICATION_ID = ""
+GUILD_ID = ""
+ADMIN_ROLE_ID = ""
+REP_ROLE_ID = ""
+CHECKIN_CHANNEL_ID = ""
+ADMIN_DASHBOARD_CHANNEL_ID = ""
+LEADERBOARD_CHANNEL_ID = ""
+MY_DESK_CATEGORY_ID = ""
+GOOGLE_SERVICE_ACCOUNT_EMAIL = ""
+SPREADSHEET_ID = ""
+FOLLOWUP_INTERVAL_DAYS = "3"
+DAILY_DM_QUOTA = "50"
+STRIKE_THRESHOLD = "3"

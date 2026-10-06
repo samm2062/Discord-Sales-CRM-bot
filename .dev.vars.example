@@ -1,0 +1,10 @@
+# Copy this file to .dev.vars for local `wrangler dev` testing.
+# Never commit the real .dev.vars file (it's gitignored).
+# In production these are set with `wrangler secret put <NAME>`, not in wrangler.toml.
+
+DISCORD_BOT_TOKEN=your-bot-token-here
+
+# The full contents of the service account JSON key's "private_key" field,
+# including the literal \n line breaks. Paste it exactly as it appears in the
+# downloaded JSON file, wrapped in double quotes.
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvQ...\n-----END PRIVATE KEY-----\n"
